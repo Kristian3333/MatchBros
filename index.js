@@ -24,6 +24,17 @@ app.get('/users', async (req, res) => {
     }
 });
 
+app.get('/activities', async (req, res) => {
+    try {
+        await dbConnect();
+        const users = await User.find().sort({ date: -1 });
+        const activities = generateActivityGroups(users);
+        res.render('activities', { activities });
+    } catch (error) {
+        console.error('Failed to generate activity groups:', error);
+        res.status(500).send('Failed to generate activity groups');
+    }
+});
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');

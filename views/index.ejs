@@ -12,6 +12,7 @@
         input[type="range"] { width: 200px; }
         button { padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
         #result { margin-top: 20px; }
+        .navigation { margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -25,37 +26,14 @@
     </form>
     <div id="result"></div>
 
-    <script>
-        document.getElementById('interestForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = {
-                name: document.getElementById('name').value,
-                interests: {
-                    fitness: parseInt(document.getElementById('fitness').value),
-                    beer: parseInt(document.getElementById('beer').value),
-                    goingOut: parseInt(document.getElementById('goingOut').value),
-                }
-            };
+    <!-- Add this navigation section just before the closing body tag -->
+    <div class="navigation">
+        <a href="/users">View All Users</a> | 
+        <a href="/activities">View Activity Groups</a>
+    </div>
 
-            try {
-                const response = await fetch('/api/users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-                const data = await response.json();
-                document.getElementById('result').innerHTML = `
-                    <h2>Your Interests:</h2>
-                    <p>Name: ${data.name}</p>
-                    <p>Fitness: ${data.interests.fitness}/10</p>
-                    <p>Beer: ${data.interests.beer}/10</p>
-                    <p>Going Out: ${data.interests.goingOut}/10</p>
-                    <a href="/users">Find Activity Buddies</a>
-                `;
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
+    <script>
+        // ... (existing JavaScript code) ...
     </script>
 </body>
 </html>

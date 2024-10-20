@@ -8,6 +8,7 @@
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
         h1 { text-align: center; }
         .user { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .navigation { margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -25,6 +26,11 @@
     <% } else { %>
         <p>No users to display.</p>
     <% } %>
-    <a href="/">Back to Home</a>
+    
+    <!-- Add this navigation section at the bottom of the body -->
+    <div class="navigation">
+        <a href="/">Back to Home</a> | 
+        <a href="/activities">View Activity Groups</a>
+    </div>
 </body>
 </html>
