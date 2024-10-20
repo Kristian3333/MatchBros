@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Buddies</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; }
+        .user { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Activity Buddies</h1>
+    <% if (users && users.length) { %>
+        <% users.forEach(function(user) { %>
+            <div class="user">
+                <h2><%= user.name %></h2>
+                <p>Fitness: <%= user.interests.fitness %>/10</p>
+                <p>Beer: <%= user.interests.beer %>/10</p>
+                <p>Going Out: <%= user.interests.goingOut %>/10</p>
+                <p>Date: <%= new Date(user.date).toISOString().split('T')[0] %></p>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No users to display.</p>
+    <% } %>
+    <a href="/">Back to Home</a>
+</body>
+</html>
