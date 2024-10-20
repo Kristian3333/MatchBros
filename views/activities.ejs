@@ -1,43 +1,129 @@
-<!-- views/activities.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Groups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1, h2 { text-align: center; }
-        .activity { border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; }
-        .group { background-color: #f0f0f0; padding: 10px; margin-bottom: 10px; }
-        .member { margin-bottom: 5px; }
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5a623;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+        
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        h1, h2 { margin: 0; }
+        
+        .activity {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .activity h2 {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px;
+            margin: 0;
+        }
+        
+        .group {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .group:last-child {
+            border-bottom: none;
+        }
+        
+        .member {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .member strong {
+            color: var(--primary-color);
+        }
+        
+        .navigation { 
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .navigation a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h1>Activity Groups</h1>
-    <% if (activities && activities.length) { %>
-        <% activities.forEach(function(activity) { %>
-            <div class="activity">
-                <h2><%= activity.name %></h2>
-                <% if (activity.groups && activity.groups.length) { %>
-                    <% activity.groups.forEach(function(group, index) { %>
-                        <div class="group">
-                            <h3>Group <%= index + 1 %></h3>
-                            <% group.forEach(function(member) { %>
-                                <div class="member">
-                                    <strong><%= member.name %></strong> - Interest level: <%= member.interestLevel %>/10
-                                </div>
-                            <% }); %>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p>No groups formed for this activity yet.</p>
-                <% } %>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>No activities or users to display. Try adding some users first!</p>
-    <% } %>
-    <a href="/">Back to Home</a>
+    <header>
+        <h1><i class="fas fa-users"></i> Activity Groups</h1>
+    </header>
+    
+    <div class="container">
+        <% if (activities && activities.length) { %>
+            <% activities.forEach(function(activity) { %>
+                <div class="activity">
+                    <h2><%= activity.name %></h2>
+                    <% if (activity.groups && activity.groups.length) { %>
+                        <% activity.groups.forEach(function(group, index) { %>
+                            <div class="group">
+                                <h3>Group <%= index + 1 %></h3>
+                                <% group.forEach(function(member) { %>
+                                    <div class="member">
+                                        <strong><%= member.name %></strong>
+                                        <span>Interest level: <%= member.interestLevel %>/10</span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No groups formed for this activity yet.</p>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No activities to display.</p>
+        <% } %>
+        
+        <div class="navigation">
+            <a href="/"><i class="fas fa-home"></i> Home</a> | 
+            <a href="/users"><i class="fas fa-user-friends"></i> View All Users</a>
+        </div>
+    </div>
 </body>
 </html>
