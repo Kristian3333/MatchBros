@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Groups</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1, h2 { text-align: center; }
+        .activity { border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; }
+        .group { background-color: #f0f0f0; padding: 10px; margin-bottom: 10px; }
+        .member { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Activity Groups</h1>
+    <% if (activities && activities.length) { %>
+        <% activities.forEach(function(activity) { %>
+            <div class="activity">
+                <h2><%= activity.name %></h2>
+                <% if (activity.groups && activity.groups.length) { %>
+                    <% activity.groups.forEach(function(group, index) { %>
+                        <div class="group">
+                            <h3>Group <%= index + 1 %></h3>
+                            <% group.forEach(function(member) { %>
+                                <div class="member">
+                                    <strong><%= member.name %></strong> - Interest level: <%= member.interestLevel %>/10
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No groups formed for this activity yet.</p>
+                <% } %>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No activities to display.</p>
+    <% } %>
+    <a href="/">Back to Home</a>
+</body>
+</html>
