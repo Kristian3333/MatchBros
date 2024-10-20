@@ -140,8 +140,12 @@
         <form id="interestForm">
             <label for="name">Name: <input type="text" id="name" required></label>
             <label>Fitness: <input type="range" id="fitness" min="0" max="10" value="5"></label>
-            <label>Beer: <input type="range" id="beer" min="0" max="10" value="5"></label>
             <label>Going Out: <input type="range" id="goingOut" min="0" max="10" value="5"></label>
+            <label>Tim Ferriss: <input type="range" id="timFerriss" min="0" max="10" value="5"></label>
+            <label>Chess: <input type="range" id="chess" min="0" max="10" value="5"></label>
+            <label>Entrepreneurship: <input type="range" id="entrepreneurship" min="0" max="10" value="5"></label>
+            <label>Gaming: <input type="range" id="gaming" min="0" max="10" value="5"></label>
+            <label>Andrew Huberman: <input type="range" id="andrewHuberman" min="0" max="10" value="5"></label>
             <button type="submit">Find Buddies</button>
         </form>
         
@@ -160,8 +164,12 @@
                 name: document.getElementById('name').value,
                 interests: {
                     fitness: parseInt(document.getElementById('fitness').value),
-                    beer: parseInt(document.getElementById('beer').value),
                     goingOut: parseInt(document.getElementById('goingOut').value),
+                    timFerriss: parseInt(document.getElementById('timFerriss').value),
+                    chess: parseInt(document.getElementById('chess').value),
+                    entrepreneurship: parseInt(document.getElementById('entrepreneurship').value),
+                    gaming: parseInt(document.getElementById('gaming').value),
+                    andrewHuberman: parseInt(document.getElementById('andrewHuberman').value)
                 }
             };
 
@@ -184,8 +192,12 @@
                     <h2>Your Interests:</h2>
                     <p><strong>Name:</strong> ${data.name}</p>
                     <p><strong>Fitness:</strong> ${data.interests.fitness}/10</p>
-                    <p><strong>Beer:</strong> ${data.interests.beer}/10</p>
                     <p><strong>Going Out:</strong> ${data.interests.goingOut}/10</p>
+                    <p><strong>Tim Ferriss:</strong> ${data.interests.timFerriss}/10</p>
+                    <p><strong>Chess:</strong> ${data.interests.chess}/10</p>
+                    <p><strong>Entrepreneurship:</strong> ${data.interests.entrepreneurship}/10</p>
+                    <p><strong>Gaming:</strong> ${data.interests.gaming}/10</p>
+                    <p><strong>Andrew Huberman:</strong> ${data.interests.andrewHuberman}/10</p>
                     <p>Your interests have been saved successfully!</p>
                     <div class="navigation">
                         <a href="/users"><i class="fas fa-user-friends"></i> View All Users</a> | 

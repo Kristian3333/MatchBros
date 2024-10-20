@@ -1,16 +1,44 @@
+// utils.js
+
+function calculateSimilarity(user1, user2) {
+    const interests = ['fitness', 'goingOut', 'timFerriss', 'chess', 'entrepreneurship', 'gaming', 'andrewHuberman'];
+    let sumOfSquares = 0;
+    let totalWeight = 0;
+
+    interests.forEach(interest => {
+        const weight = (user1.interests[interest] + user2.interests[interest]) / 20; // Higher weight for shared high interests
+        const diff = user1.interests[interest] - user2.interests[interest];
+        sumOfSquares += weight * diff * diff;
+        totalWeight += weight;
+    });
+
+    return 1 - Math.sqrt(sumOfSquares / totalWeight) / 10; // Normalize to 0-1 range
+}
+
+function findBestMatches(user, allUsers, numMatches = 5) {
+    const otherUsers = allUsers.filter(u => u._id.toString() !== user._id.toString());
+    const usersWithSimilarity = otherUsers.map(otherUser => ({
+        ...otherUser.toObject(),
+        similarity: calculateSimilarity(user, otherUser)
+    }));
+
+    return usersWithSimilarity
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, numMatches);
+}
 
 function generateActivityGroups(users) {
-    console.log('Generating activity groups for', users.length, 'users');
-    
     const activities = [
         { name: 'Fitness', key: 'fitness' },
-        { name: 'Beer', key: 'beer' },
-        { name: 'Going Out', key: 'goingOut' }
+        { name: 'Going Out', key: 'goingOut' },
+        { name: 'Tim Ferriss', key: 'timFerriss' },
+        { name: 'Chess', key: 'chess' },
+        { name: 'Entrepreneurship', key: 'entrepreneurship' },
+        { name: 'Gaming', key: 'gaming' },
+        { name: 'Andrew Huberman', key: 'andrewHuberman' }
     ];
 
     return activities.map(activity => {
-        console.log('Processing activity:', activity.name);
-        
         const sortedUsers = users
             .filter(user => user.interests && typeof user.interests[activity.key] === 'number')
             .map(user => ({
@@ -18,8 +46,6 @@ function generateActivityGroups(users) {
                 interestLevel: user.interests[activity.key]
             }))
             .sort((a, b) => b.interestLevel - a.interestLevel);
-
-        console.log('Sorted users for', activity.name, ':', sortedUsers.length);
 
         const groups = [];
         for (let i = 0; i < sortedUsers.length; i += 3) {
@@ -33,4 +59,4 @@ function generateActivityGroups(users) {
     });
 }
 
-module.exports = { generateActivityGroups };
+module.exports = { calculateSimilarity, findBestMatches, generateActivityGroups };
