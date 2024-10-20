@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 
-const PostSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    name: { type: String, required: true },    // Assuming 'name' as a String directly. Adjust if it's a reference.
-    ccomments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],  
-    date: { type: Date, default: Date.now }    // 'date' will automatically set to current date/time if not provided.
+const PreferenceSchema = new mongoose.Schema({
+    activity: { type: String, required: true }, // Name of the activity (e.g., "fitness", "beer", etc.)
+    rating: { type: Number, required: true, min: 0, max: 10 } // Rating from 0 to 10
 });
 
-const Post = mongoose.model('Post', PostSchema);
+const UserSchema = new mongoose.Schema({
+    name: { type: String, required: true }, // User's name
+    preferences: [PreferenceSchema], // Array of preferences (each containing an activity and rating)
+    date: { type: Date, default: Date.now } // Date when the user submitted their preferences
+});
+
+module.exports = mongoose.model('User', UserSchema);
 
 module.exports = Post;
 
