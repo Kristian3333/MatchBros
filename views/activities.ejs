@@ -53,24 +53,20 @@
             margin: 0;
         }
         
-        .group {
+        .members {
             padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .group:last-child {
-            border-bottom: none;
         }
         
         .member {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 5px;
         }
         
-        .member strong {
-            color: var(--primary-color);
+        .explanation {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
         }
         
         .navigation { 
@@ -95,25 +91,29 @@
     </header>
     
     <div class="container">
+        <div class="explanation">
+            <h2>How We Group People</h2>
+            <p>We use a similarity score to group people with similar interests. Here's how it works:</p>
+            <ol>
+                <li>We compare each person's interest levels across all categories.</li>
+                <li>We give more weight to shared high interests.</li>
+                <li>The closer the interest levels are, the higher the similarity score.</li>
+                <li>We then group people with the highest similarity scores together.</li>
+            </ol>
+            <p>This method helps ensure that you're grouped with people who share your passion levels across various interests!</p>
+        </div>
+
         <% if (activities && activities.length) { %>
             <% activities.forEach(function(activity) { %>
                 <div class="activity">
                     <h2><%= activity.name %></h2>
-                    <% if (activity.groups && activity.groups.length) { %>
-                        <% activity.groups.forEach(function(group, index) { %>
-                            <div class="group">
-                                <h3>Group <%= index + 1 %></h3>
-                                <% group.forEach(function(member) { %>
-                                    <div class="member">
-                                        <strong><%= member.name %></strong>
-                                        <span>Interest level: <%= member.interestLevel %>/10</span>
-                                    </div>
-                                <% }); %>
+                    <div class="members">
+                        <% activity.members.forEach(function(member) { %>
+                            <div class="member">
+                                <strong><%= member.name %></strong>
                             </div>
                         <% }); %>
-                    <% } else { %>
-                        <p>No groups formed for this activity yet.</p>
-                    <% } %>
+                    </div>
                 </div>
             <% }); %>
         <% } else { %>

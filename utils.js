@@ -1,5 +1,3 @@
-// utils.js
-
 function calculateSimilarity(user1, user2) {
     const interests = ['fitness', 'goingOut', 'timFerriss', 'chess', 'entrepreneurship', 'gaming', 'andrewHuberman'];
     let sumOfSquares = 0;
@@ -27,36 +25,57 @@ function findBestMatches(user, allUsers, numMatches = 5) {
         .slice(0, numMatches);
 }
 
-function generateActivityGroups(users) {
-    const activities = [
-        { name: 'Fitness', key: 'fitness' },
-        { name: 'Going Out', key: 'goingOut' },
-        { name: 'Tim Ferriss', key: 'timFerriss' },
-        { name: 'Chess', key: 'chess' },
-        { name: 'Entrepreneurship', key: 'entrepreneurship' },
-        { name: 'Gaming', key: 'gaming' },
-        { name: 'Andrew Huberman', key: 'andrewHuberman' }
-    ];
-
-    return activities.map(activity => {
-        const sortedUsers = users
-            .filter(user => user.interests && typeof user.interests[activity.key] === 'number')
-            .map(user => ({
-                name: user.name,
-                interestLevel: user.interests[activity.key]
-            }))
-            .sort((a, b) => b.interestLevel - a.interestLevel);
-
-        const groups = [];
-        for (let i = 0; i < sortedUsers.length; i += 3) {
-            groups.push(sortedUsers.slice(i, i + 3));
+function generateActivityGroups(users, numActivities = 5, usersPerActivity = 3) {
+    const allPairs = [];
+    for (let i = 0; i < users.length; i++) {
+        for (let j = i + 1; j < users.length; j++) {
+            allPairs.push({
+                user1: users[i],
+                user2: users[j],
+                similarity: calculateSimilarity(users[i], users[j])
+            });
         }
+    }
 
-        return {
-            name: activity.name,
-            groups: groups
-        };
+    allPairs.sort((a, b) => b.similarity - a.similarity);
+
+    const activities = Array.from({ length: numActivities }, (_, i) => ({
+        name: `Activity ${i + 1}`,
+        members: []
+    }));
+
+    const assignedUsers = new Set();
+
+    allPairs.forEach(pair => {
+        if (assignedUsers.size >= users.length) return;
+
+        const availableActivities = activities.filter(activity => activity.members.length < usersPerActivity);
+        if (availableActivities.length === 0) return;
+
+        const activity = availableActivities[0];
+
+        if (!assignedUsers.has(pair.user1._id.toString())) {
+            activity.members.push({ name: pair.user1.name, id: pair.user1._id });
+            assignedUsers.add(pair.user1._id.toString());
+        }
+        if (!assignedUsers.has(pair.user2._id.toString()) && activity.members.length < usersPerActivity) {
+            activity.members.push({ name: pair.user2.name, id: pair.user2._id });
+            assignedUsers.add(pair.user2._id.toString());
+        }
     });
+
+    // Assign any remaining users to activities with space
+    users.forEach(user => {
+        if (!assignedUsers.has(user._id.toString())) {
+            const availableActivity = activities.find(activity => activity.members.length < usersPerActivity);
+            if (availableActivity) {
+                availableActivity.members.push({ name: user.name, id: user._id });
+                assignedUsers.add(user._id.toString());
+            }
+        }
+    });
+
+    return activities.filter(activity => activity.members.length > 0);
 }
 
 module.exports = { calculateSimilarity, findBestMatches, generateActivityGroups };
