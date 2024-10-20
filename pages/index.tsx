@@ -1,85 +1,125 @@
 import { useState } from 'react';
-import React from 'react'; 
+import React from 'react';
+
+const activities = [
+  { id: 'fitness', name: 'Fitness' },
+  { id: 'beer', name: 'Beer' },
+  { id: 'goingOut', name: 'Going Out' },
+  { id: 'jockoWillink', name: 'Jocko Willink' },
+  // Add more activities as needed
+];
 
 export default function Home() {
-  const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState('');
   const [name, setName] = useState('');
-  const [comment, setComment] = useState('');
+  const [preferences, setPreferences] = useState(
+    activities.reduce((acc, activity) => {
+      acc[activity.id] = 0; // Initialize each activity rating to 0
+      return acc;
+    }, {})
+  );
+  const [submitted, setSubmitted] = useState(false);
+  const [users, setUsers] = useState([]);
 
-  const fetchPosts = async () => {
-    try {
-      const response = await fetch('/api/posts');
-      if (!response.ok) {
-        throw new Error('Failed to fetch posts');
-      }
-      const data = await response.json();
-      setPosts(data);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
+  // Function to update each activity's rating
+  const handlePreferenceChange = (activityId, value) => {
+    setPreferences((prev) => ({
+      ...prev,
+      [activityId]: value,
+    }));
   };
 
-  const submitPost = async (event) => {
+  // Handle submission of the form (name + preferences)
+  const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, name, comment }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to submit post');
-      }
-      await fetchPosts(); // Refresh posts after submission
-    } catch (error) {
-      console.error('Error submitting post:', error);
-    }
+    const newUser = { name, preferences };
+    setUsers((prevUsers) => [...prevUsers, newUser]); // Save the user's data
+    setSubmitted(true); // Mark the form as submitted
+  };
+
+  // Handle event creation (match users with similar preferences)
+  const handleCreateEvent = () => {
+    const threshold = 4; // Define a similarity threshold for matching
+    const matchedUsers = users.filter((user) => {
+      return Object.keys(preferences).some(
+        (activity) =>
+          Math.abs(user.preferences[activity] - preferences[activity]) <= threshold
+      );
+    });
+    alert(`Event created! Inviting: ${matchedUsers.map((u) => u.name).join(', ')}`);
   };
 
   return (
     <div>
-      
-        <title>Comunidad de la Ciudad</title>
-        <meta name="description" content="Comunidad de la Ciudad" />
-     
+      <title>Find Your Activity Buddy</title>
+      <meta name="description" content="Find workout partners or activity buddies" />
 
-      <main>
-        <h1>Bienvenidos a la Comunidad de la Ciudad</h1>
-        
-        <section>
-          <h2>Eventos</h2>
-          <form onSubmit={submitPost}>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Título" />
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu Nombre" />
-            <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Comentario"></textarea>
-            <button type="submit">Publicar</button>
-          </form>
+      <main style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {/* Left Section - Preferences Form */}
+        <section style={{ flex: 1 }}>
+          <h1>Find Your Activity Buddy</h1>
+          {!submitted ? (
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your Name"
+                required
+              />
+              <h2>Rate Your Interests:</h2>
+              {activities.map((activity) => (
+                <div key={activity.id}>
+                  <label>{activity.name}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    value={preferences[activity.id]}
+                    onChange={(e) =>
+                      handlePreferenceChange(activity.id, parseInt(e.target.value))
+                    }
+                  />
+                  <span>{preferences[activity.id]}</span>
+                </div>
+              ))}
+              <button type="submit">Submit Preferences</button>
+            </form>
+          ) : (
+            <div>
+              <h2>Your Preferences</h2>
+              <p>Name: {name}</p>
+              {activities.map((activity) => (
+                <div key={activity.id}>
+                  <strong>{activity.name}</strong>: {preferences[activity.id]}
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
-        <section>
-          <h2>Ventas de Segunda Mano</h2>
-          <form onSubmit={submitPost}>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Título" />
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu Nombre" />
-            <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Comentario"></textarea>
-            <button type="submit">Publicar</button>
-          </form>
-        </section>
+        {/* Right Section - Event Creation */}
+        <section style={{ flex: 1, marginLeft: '20px' }}>
+          <h2>Create an Event</h2>
+          <button onClick={handleCreateEvent}>Create Event with Matched Users</button>
 
-        {posts.map((post) => (
-          <div key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.comment}</p>
-            <small>By: {post.name}</small>
-          </div>
-        ))}
+          <h3>Users:</h3>
+          {users.map((user, index) => (
+            <div key={index}>
+              <p>
+                <strong>{user.name}</strong>
+              </p>
+              {activities.map((activity) => (
+                <div key={activity.id}>
+                  {activity.name}: {user.preferences[activity.id]}
+                </div>
+              ))}
+            </div>
+          ))}
+        </section>
       </main>
 
       <footer>
-        © 2024 Comunidad de la Ciudad
+        © 2024 Find Your Activity Buddy
       </footer>
     </div>
   );
