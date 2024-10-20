@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { display: flex; flex-wrap: wrap; justify-content: space-around; padding: 20px; }
+        .post { margin: 10px; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 30%; min-width: 300px; background-color: #f9f9f9; }
+        form { margin-top: 20px; padding: 20px; background-color: #f0f0f0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input, textarea, button { width: 100%; margin-top: 8px; padding: 8px; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Posts</h1>
+    <div class="container">
+        <% if (posts && posts.length) { %>
+            <% posts.forEach(function(post) { %>
+                <div class="post">
+                    <h2><%= post.title %></h2>
+                    <p>Posted by: <%= post.name %></p>
+                    <p><%= post.comment %></p>
+                    <p>Date: <%= new Date(post.date).toISOString().split('T')[0] %></p>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No posts to display.</p>
+        <% } %>
+    </div>
+    <h2>Add a New Post</h2>
+    <form action="/api/posts" method="post">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="name" placeholder="Your Name" required>
+        <textarea name="comment" placeholder="Your Comment" required></textarea>
+        <button type="submit">Post</button>
+    </form>
+</body>
+</html>
