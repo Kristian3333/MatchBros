@@ -1,3 +1,4 @@
+
 function generateActivityGroups(users) {
     console.log('Generating activity groups for', users.length, 'users');
     
@@ -31,6 +32,5 @@ function generateActivityGroups(users) {
         };
     });
 }
-
 
 module.exports = { generateActivityGroups };
