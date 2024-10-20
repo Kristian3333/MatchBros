@@ -6,25 +6,28 @@ const User = require('../models/User');
 const router = express.Router();
 
 router.get('/users', async (req, res) => {
-    await dbConnect();
     try {
-        const users = await User.find();
+        await dbConnect();
+        const users = await User.find().sort({ date: -1 });
+        console.log(`Retrieved ${users.length} users from database`);
         res.status(200).json(users);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error retrieving users');
+        console.error('Error retrieving users:', error);
+        res.status(500).json({ message: 'Error retrieving users', error: error.message });
     }
 });
 
 router.post('/users', async (req, res) => {
-    await dbConnect();
     try {
+        await dbConnect();
+        console.log('Received user data:', req.body);
         const newUser = new User(req.body);
-        await newUser.save();
-        res.status(201).json(newUser);
+        const savedUser = await newUser.save();
+        console.log('Saved user:', savedUser);
+        res.status(201).json(savedUser);
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error saving user');
+        console.error('Error saving user:', error);
+        res.status(500).json({ message: 'Error saving user', error: error.message });
     }
 });
 

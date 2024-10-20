@@ -5,14 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Buddy Finder</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
         h1 { text-align: center; }
-        form { display: flex; flex-direction: column; gap: 10px; }
-        label { display: flex; justify-content: space-between; align-items: center; }
+        form { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        label { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         input[type="range"] { width: 200px; }
-        button { padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button { 
+            padding: 10px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
         #result { margin-top: 20px; }
-        .navigation { margin-top: 20px; text-align: center; }
+        .navigation { 
+            margin-top: 20px; 
+            text-align: center; 
+        }
+        @media (max-width: 600px) {
+            input[type="range"] { width: 150px; }
+        }
     </style>
 </head>
 <body>
@@ -26,14 +56,55 @@
     </form>
     <div id="result"></div>
 
-    <!-- Add this navigation section just before the closing body tag -->
     <div class="navigation">
         <a href="/users">View All Users</a> | 
         <a href="/activities">View Activity Groups</a>
     </div>
 
     <script>
-        // ... (existing JavaScript code) ...
+        document.getElementById('interestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('name').value,
+                interests: {
+                    fitness: parseInt(document.getElementById('fitness').value),
+                    beer: parseInt(document.getElementById('beer').value),
+                    goingOut: parseInt(document.getElementById('goingOut').value),
+                }
+            };
+
+            try {
+                console.log('Submitting form data:', formData);
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Server response:', data);
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>Your Interests:</h2>
+                    <p>Name: ${data.name}</p>
+                    <p>Fitness: ${data.interests.fitness}/10</p>
+                    <p>Beer: ${data.interests.beer}/10</p>
+                    <p>Going Out: ${data.interests.goingOut}/10</p>
+                    <p>Your interests have been saved successfully!</p>
+                    <a href="/users">View All Users</a> | <a href="/activities">Find Activity Buddies</a>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `
+                    <p>Error: Failed to save your interests. Please try again.</p>
+                    <p>Error details: ${error.message}</p>
+                `;
+            }
+        });
     </script>
 </body>
 </html>
