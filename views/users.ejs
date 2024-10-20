@@ -5,34 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Buddies</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            box-sizing: border-box;
+        }
         h1 { text-align: center; }
-        .user { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
-        .navigation { margin-top: 20px; text-align: center; }
-        .pagination { display: flex; justify-content: center; margin-top: 20px; }
-        .pagination button { margin: 0 5px; }
+        .user { 
+            border: 1px solid #ddd; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            border-radius: 5px;
+        }
+        .navigation { 
+            margin-top: 20px; 
+            text-align: center; 
+        }
+        .pagination { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            margin-top: 20px; 
+            flex-wrap: wrap;
+        }
+        .pagination button { 
+            margin: 5px; 
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .pagination button:hover {
+            background-color: #0056b3;
+        }
+        .pagination button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #currentPage {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .user {
+                padding: 5px;
+            }
+            .pagination button {
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>Activity Buddies</h1>
-    <div id="userList">
-        <% if (users && users.length) { %>
-            <% users.forEach(function(user) { %>
-                <div class="user">
-                    <h2><%= user.name %></h2>
-                    <p>Fitness: <%= user.interests.fitness %>/10</p>
-                    <p>Beer: <%= user.interests.beer %>/10</p>
-                    <p>Going Out: <%= user.interests.goingOut %>/10</p>
-                    <p>Date: <%= new Date(user.date).toISOString().split('T')[0] %></p>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <p>No users to display.</p>
-        <% } %>
-    </div>
+    <div id="userList"></div>
     
     <div class="pagination">
-        <button id="prevPage" disabled>Previous</button>
+        <button id="prevPage">Previous</button>
         <span id="currentPage">Page 1</span>
         <button id="nextPage">Next</button>
     </div>
