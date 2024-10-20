@@ -9,28 +9,84 @@
         h1 { text-align: center; }
         .user { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
         .navigation { margin-top: 20px; text-align: center; }
+        .pagination { display: flex; justify-content: center; margin-top: 20px; }
+        .pagination button { margin: 0 5px; }
     </style>
 </head>
 <body>
     <h1>Activity Buddies</h1>
-    <% if (users && users.length) { %>
-        <% users.forEach(function(user) { %>
-            <div class="user">
-                <h2><%= user.name %></h2>
-                <p>Fitness: <%= user.interests.fitness %>/10</p>
-                <p>Beer: <%= user.interests.beer %>/10</p>
-                <p>Going Out: <%= user.interests.goingOut %>/10</p>
-                <p>Date: <%= new Date(user.date).toISOString().split('T')[0] %></p>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>No users to display.</p>
-    <% } %>
+    <div id="userList">
+        <% if (users && users.length) { %>
+            <% users.forEach(function(user) { %>
+                <div class="user">
+                    <h2><%= user.name %></h2>
+                    <p>Fitness: <%= user.interests.fitness %>/10</p>
+                    <p>Beer: <%= user.interests.beer %>/10</p>
+                    <p>Going Out: <%= user.interests.goingOut %>/10</p>
+                    <p>Date: <%= new Date(user.date).toISOString().split('T')[0] %></p>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>No users to display.</p>
+        <% } %>
+    </div>
     
-    <!-- Add this navigation section at the bottom of the body -->
+    <div class="pagination">
+        <button id="prevPage" disabled>Previous</button>
+        <span id="currentPage">Page 1</span>
+        <button id="nextPage">Next</button>
+    </div>
+
     <div class="navigation">
         <a href="/">Back to Home</a> | 
         <a href="/activities">View Activity Groups</a>
     </div>
+
+    <script>
+        const usersPerPage = 5;
+        let currentPage = 1;
+        const users = <%- JSON.stringify(users) %>;
+
+        function displayUsers(page) {
+            const start = (page - 1) * usersPerPage;
+            const end = start + usersPerPage;
+            const usersToDisplay = users.slice(start, end);
+
+            let html = '';
+            usersToDisplay.forEach(user => {
+                html += `
+                    <div class="user">
+                        <h2>${user.name}</h2>
+                        <p>Fitness: ${user.interests.fitness}/10</p>
+                        <p>Beer: ${user.interests.beer}/10</p>
+                        <p>Going Out: ${user.interests.goingOut}/10</p>
+                        <p>Date: ${new Date(user.date).toISOString().split('T')[0]}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('userList').innerHTML = html;
+            document.getElementById('currentPage').textContent = `Page ${page}`;
+            document.getElementById('prevPage').disabled = page === 1;
+            document.getElementById('nextPage').disabled = end >= users.length;
+        }
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayUsers(currentPage);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage * usersPerPage < users.length) {
+                currentPage++;
+                displayUsers(currentPage);
+            }
+        });
+
+        // Initial display
+        displayUsers(currentPage);
+    </script>
 </body>
 </html>
