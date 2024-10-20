@@ -28,11 +28,19 @@ app.get('/activities', async (req, res) => {
     try {
         await dbConnect();
         const users = await User.find().sort({ date: -1 });
+        console.log('Retrieved', users.length, 'users from database');
+        
+        if (users.length === 0) {
+            return res.render('activities', { activities: [] });
+        }
+
         const activities = generateActivityGroups(users);
+        console.log('Generated activities:', activities.length);
+        
         res.render('activities', { activities });
     } catch (error) {
         console.error('Failed to generate activity groups:', error);
-        res.status(500).send('Failed to generate activity groups');
+        res.status(500).render('error', { message: 'Failed to generate activity groups', error });
     }
 });
 app.use((err, req, res, next) => {
