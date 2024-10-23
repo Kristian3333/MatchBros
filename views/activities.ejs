@@ -1,55 +1,28 @@
-<button id="findActivitiesBtn" class="button">Find activities with like-minded people</button>
+<button id="findActivitiesBtn" class="button">Find Your Activity Group</button>
 
-<div id="groupSizeSelector" class="group-size-selector hidden">
-    <h2>How many people would you like to meet?</h2>
-    <select id="groupSizeSelect" class="button">
-        <option value="2">2 people</option>
-        <option value="3">3 people</option>
-        <option value="4">4 people</option>
-        <option value="5">5 people</option>
-    </select>
-    <button onclick="findGroups()" class="button">Find Groups</button>
-</div>
+    <div id="groupSizeSelector" class="group-size-selector hidden">
+        <h2>How many people would you like to meet?</h2>
+        <select id="groupSizeSelect">
+            <option value="2">2 people</option>
+            <option value="3">3 people</option>
+            <option value="4">4 people</option>
+            <option value="5">5 people</option>
+        </select>
+        <button onclick="findGroups()" class="button">Find My Group</button>
+    </div>
 
-<div id="dynamicGroups"></div>
+    <div id="dynamicGroups" class="hidden"></div>
 
-<div id="initialGroups">
-    <% if (activities && activities.length) { %>
-        <% activities.forEach(function(activity) { %>
-            <div class="group">
-                <h2><%= activity.name %></h2>
-                <% if (activity.groups && activity.groups.length) { %>
-                    <% activity.groups.forEach(function(group, index) { %>
-                        <div class="group">
-                            <h3>Group <%= index + 1 %></h3>
-                            <% group.forEach(function(member) { %>
-                                <div class="member">
-                                    <p><strong><%= member.name %></strong></p>
-                                    <p>Interest level: <%= member.interestLevel %>/10</p>
-                                </div>
-                            <% }); %>
-                        </div>
-                    <% }); %>
-                <% } else { %>
-                    <p>No groups formed for this activity yet.</p>
-                <% } %>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>No activities to display.</p>
-    <% } %>
-</div>
-
-<div class="nav-links">
-    <a href="/">Home</a> |
-    <a href="/users">View All Users</a>
+    <div class="nav-links">
+        <a href="/">Home</a> |
+        <a href="/users">View All Users</a>
+    </div>
 </div>
 
 <script>
     document.getElementById('findActivitiesBtn').addEventListener('click', function() {
         document.getElementById('groupSizeSelector').classList.remove('hidden');
         this.classList.add('hidden');
-        document.getElementById('initialGroups').classList.add('hidden');
     });
 
     async function findGroups() {
@@ -57,7 +30,6 @@
         const dynamicGroups = document.getElementById('dynamicGroups');
         
         try {
-            console.log('Fetching groups for size:', groupSize);
             const response = await fetch(`/api/activities/groups/${groupSize}`);
             
             if (!response.ok) {
@@ -65,44 +37,40 @@
             }
 
             const activities = await response.json();
-            console.log('Received activities:', activities);
-            
             dynamicGroups.innerHTML = '';
             
-            activities.forEach(activity => {
-                const activitySection = document.createElement('div');
-                activitySection.className = 'activity-section';
+            const activity = activities[0]; // Just take the first activity
+            if (activity && activity.groups && activity.groups.length > 0) {
+                const group = activity.groups[0]; // Just take the first group
                 
-                let activityHtml = `<h2>${activity.name}</h2>`;
+                let groupHtml = `
+                    <div class="group">
+                        <h2>${activity.name} Group</h2>
+                        <div class="members">
+                `;
                 
-                if (activity.groups && activity.groups.length > 0) {
-                    activity.groups.forEach((group, groupIndex) => {
-                        activityHtml += `
-                            <div class="group">
-                                <h3>Group ${groupIndex + 1}</h3>
-                        `;
-                        
-                        group.forEach(member => {
-                            activityHtml += `
-                                <div class="member">
-                                    <p><strong>${member.name}</strong></p>
-                                    <p>Interest level: ${member.interestLevel}/10</p>
-                                    ${member.similarity ? 
-                                        `<p class="similarity-score">Similarity score: ${(member.similarity * 100).toFixed(1)}%</p>` 
-                                        : ''}
-                                </div>
-                            `;
-                        });
-                        
-                        activityHtml += `</div>`;
-                    });
-                } else {
-                    activityHtml += `<p>No groups formed for this activity yet.</p>`;
-                }
+                group.forEach(member => {
+                    groupHtml += `
+                        <div class="member">
+                            <div class="member-name">${member.name}</div>
+                            <div class="interest-level">Interest Level: ${member.interestLevel}/10</div>
+                        </div>
+                    `;
+                });
                 
-                activitySection.innerHTML = activityHtml;
-                dynamicGroups.appendChild(activitySection);
-            });
+                groupHtml += `
+                        </div>
+                    </div>
+                `;
+                
+                dynamicGroups.innerHTML = groupHtml;
+            } else {
+                dynamicGroups.innerHTML = `
+                    <div class="group">
+                        <p>No suitable group found. Try different criteria.</p>
+                    </div>
+                `;
+            }
             
             dynamicGroups.classList.remove('hidden');
             document.getElementById('groupSizeSelector').classList.add('hidden');
@@ -110,9 +78,8 @@
         } catch (error) {
             console.error('Error:', error);
             dynamicGroups.innerHTML = `
-                <div class="error">
+                <div class="group">
                     <p>Failed to fetch groups. Please try again.</p>
-                    <p>Error: ${error.message}</p>
                 </div>
             `;
         }
