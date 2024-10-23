@@ -10,60 +10,114 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             box-sizing: border-box;
         }
         .container {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
         h1 {
-            color: #1a237e;
+            color: #4a3f8d;
             text-align: center;
             margin-bottom: 40px;
             font-size: 3em;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         .form-group {
-            margin: 25px 0;
+            margin: 35px 0;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            position: relative;
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-size: 1.2em;
-            color: #2c3e50;
-            font-weight: 500;
+            color: #4a3f8d;
+            font-weight: 600;
         }
-        input[type="text"],
-        input[type="number"] {
+        .slider-container {
+            position: relative;
+            height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .slider-value {
+            position: absolute;
+            right: -50px;
+            color: #4a3f8d;
+            font-weight: 600;
+            font-size: 1.2em;
+            width: 40px;
+            text-align: center;
+        }
+        input[type="text"] {
             width: 100%;
             padding: 15px;
-            border: 2px solid #3498db;
+            border: 2px solid #667eea;
             border-radius: 10px;
             font-size: 1.1em;
             transition: all 0.3s ease;
-            background-color: #f8f9fa;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"]:focus,
-        input[type="number"]:focus {
+        input[type="text"]:focus {
             outline: none;
-            border-color: #2980b9;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background-color: white;
-        }
-        input[type="number"] {
-            max-width: 100px;
+            border-color: #764ba2;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         .button {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 15px 30px;
             border: none;
@@ -77,20 +131,21 @@
             min-width: 250px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
-            background: linear-gradient(135deg, #2980b9 0%, #2473a5 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
         .nav-links {
             margin-top: 40px;
             text-align: center;
             padding-top: 20px;
-            border-top: 2px solid #e9ecef;
+            border-top: 2px solid rgba(74, 63, 141, 0.2);
         }
         .nav-links a {
-            color: #3498db;
+            color: #4a3f8d;
             text-decoration: none;
             margin: 0 15px;
             font-weight: 600;
@@ -98,23 +153,8 @@
             transition: all 0.3s ease;
         }
         .nav-links a:hover {
-            color: #2980b9;
-            text-decoration: underline;
-        }
-        .interest-scale {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 5px;
-        }
-        .interest-scale span {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .error {
-            color: #e74c3c;
-            font-size: 0.9em;
-            margin-top: 5px;
+            color: #764ba2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         @media (max-width: 768px) {
             body {
@@ -131,14 +171,6 @@
                 min-width: 200px;
                 padding: 12px 24px;
             }
-            label {
-                font-size: 1.1em;
-            }
-            input[type="text"],
-            input[type="number"] {
-                font-size: 1em;
-                padding: 12px;
-            }
         }
     </style>
 </head>
@@ -146,7 +178,7 @@
     <div class="container">
         <h1>Activity Buddy Finder</h1>
         
-        <form action="/api/users" method="POST">
+        <form id="interestForm">
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -154,57 +186,57 @@
 
             <div class="form-group">
                 <label for="fitness">Fitness:</label>
-                <div class="interest-scale">
-                    <input type="number" id="fitness" name="interests[fitness]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="fitness" name="interests[fitness]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="goingOut">Going Out:</label>
-                <div class="interest-scale">
-                    <input type="number" id="goingOut" name="interests[goingOut]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="goingOut" name="interests[goingOut]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="timFerriss">Tim Ferriss:</label>
-                <div class="interest-scale">
-                    <input type="number" id="timFerriss" name="interests[timFerriss]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="timFerriss" name="interests[timFerriss]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="chess">Chess:</label>
-                <div class="interest-scale">
-                    <input type="number" id="chess" name="interests[chess]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="chess" name="interests[chess]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="entrepreneurship">Entrepreneurship:</label>
-                <div class="interest-scale">
-                    <input type="number" id="entrepreneurship" name="interests[entrepreneurship]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="entrepreneurship" name="interests[entrepreneurship]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="gaming">Gaming:</label>
-                <div class="interest-scale">
-                    <input type="number" id="gaming" name="interests[gaming]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="gaming" name="interests[gaming]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="andrewHuberman">Andrew Huberman:</label>
-                <div class="interest-scale">
-                    <input type="number" id="andrewHuberman" name="interests[andrewHuberman]" min="0" max="10" required>
-                    <span>(0-10)</span>
+                <div class="slider-container">
+                    <input type="range" id="andrewHuberman" name="interests[andrewHuberman]" min="0" max="10" value="5">
+                    <div class="slider-value">5</div>
                 </div>
             </div>
 
@@ -218,7 +250,15 @@
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        // Update slider values in real-time
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const valueDisplay = slider.nextElementSibling;
+            slider.addEventListener('input', () => {
+                valueDisplay.textContent = slider.value;
+            });
+        });
+
+        document.getElementById('interestForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             try {
