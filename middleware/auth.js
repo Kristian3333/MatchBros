@@ -1,29 +1,62 @@
-// middleware/auth.js
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        
-        console.log('Received token:', token); // Debug log
+        // Check for access token in cookies
+        const accessToken = req.cookies.accessToken;
+        const refreshToken = req.cookies.refreshToken;
 
-        if (!token) {
-            console.log('No token provided'); // Debug log
-            return res.status(401).json({ message: 'Authentication required' });
+        if (!accessToken && !refreshToken) {
+            return res.redirect('/login');
         }
 
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.userId;
-            console.log('Token verified, userId:', decoded.userId); // Debug log
+            // Verify access token
+            if (accessToken) {
+                const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+                req.user = await User.findById(decoded.userId).select('-password');
+                return next();
+            }
+        } catch (error) {
+            // Access token expired, try refresh token
+            if (!refreshToken) {
+                return res.redirect('/login');
+            }
+        }
+
+        // Try to refresh the token
+        try {
+            const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+            const user = await User.findById(decoded.userId);
+
+            if (!user || refreshToken !== user.refreshToken) {
+                throw new Error('Invalid refresh token');
+            }
+
+            // Generate new tokens
+            const newAccessToken = jwt.sign(
+                { userId: user._id },
+                process.env.JWT_ACCESS_SECRET,
+                { expiresIn: '15m' }
+            );
+
+            // Set new access token cookie
+            res.cookie('accessToken', newAccessToken, {
+                ...require('../config/auth.config').cookieOptions,
+                maxAge: 15 * 60 * 1000 // 15 minutes
+            });
+
+            req.user = user;
             next();
         } catch (error) {
-            console.error('Token verification failed:', error); // Debug log
-            return res.status(401).json({ message: 'Invalid token' });
+            res.clearCookie('accessToken');
+            res.clearCookie('refreshToken');
+            return res.redirect('/login');
         }
     } catch (error) {
-        console.error('Auth middleware error:', error); // Debug log
-        res.status(401).json({ message: 'Authentication failed' });
+        console.error('Auth middleware error:', error);
+        return res.redirect('/login');
     }
 };
 
