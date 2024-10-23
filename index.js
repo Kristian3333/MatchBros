@@ -1,54 +1,202 @@
 const express = require('express');
 const path = require('path');
-const dbConnect = require('./lib/dbConnect');
-const User = require('./models/User');
-const { generateActivityGroups } = require('./utils'); // Add this line
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const authMiddleware = require('./middleware/auth');
+require('dotenv').config();
+
 const app = express();
 
-app.set('views', path.join(__dirname, 'views'));
+// Middleware
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api', require('./api/users'));
 
-app.get('/', (req, res) => {
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
+// Public Routes
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+// Auth Routes
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { email, password, name } = req.body;
+
+        // Check if user exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Create new user
+        const user = new User({
+            email,
+            password,
+            name,
+            interests: {
+                fitness: 5,
+                goingOut: 5,
+                timFerriss: 5,
+                chess: 5,
+                entrepreneurship: 5,
+                gaming: 5,
+                andrewHuberman: 5
+            }
+        });
+
+        await user.save();
+
+        // Create token
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(201).json({ token, userId: user._id });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Error registering user' });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Find user
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Create token
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({ token, userId: user._id });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error logging in' });
+    }
+});
+
+// Protected Routes
+app.get('/', authMiddleware, (req, res) => {
     res.render('index');
 });
 
-app.get('/users', async (req, res) => {
+app.get('/users', authMiddleware, async (req, res) => {
     try {
-        await dbConnect();
-        const users = await User.find().sort({ date: -1 });
+        const users = await User.find({}, 'name interests');
         res.render('users', { users });
     } catch (error) {
-        console.error('Failed to retrieve users:', error);
-        res.status(500).render('error', { message: 'Failed to retrieve users', error });
+        console.error('Error fetching users:', error);
+        res.status(500).json({ message: 'Error fetching users' });
     }
 });
 
-app.get('/activities', async (req, res) => {
+app.get('/activities', authMiddleware, async (req, res) => {
+    res.render('activities');
+});
+
+// API Routes
+app.post('/api/users', authMiddleware, async (req, res) => {
     try {
-        await dbConnect();
-        const users = await User.find().sort({ date: -1 });
-        console.log(`Retrieved ${users.length} users from database`);
-        
-        if (users.length === 0) {
-            return res.render('activities', { activities: [] });
-        }
-
-        const activities = generateActivityGroups(users);
-        console.log('Generated activities:', activities.length);
-        
-        res.render('activities', { activities });
+        const { name, interests } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.userId,
+            { name, interests },
+            { new: true }
+        );
+        res.json(user);
     } catch (error) {
-        console.error('Failed to generate activity groups:', error);
-        res.status(500).render('error', { message: 'Failed to generate activity groups', error });
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: 'Error updating user' });
     }
 });
 
+app.get('/api/activities/groups/:size', authMiddleware, async (req, res) => {
+    try {
+        const groupSize = parseInt(req.params.size);
+        const currentUser = await User.findById(req.userId);
+        const users = await User.find({ _id: { $ne: req.userId } });
+
+        // Calculate similarities and form groups
+        // ... (your existing group formation logic)
+
+        res.json(activities);
+    } catch (error) {
+        console.error('Error forming groups:', error);
+        res.status(500).json({ message: 'Error forming groups' });
+    }
+});
+
+// User Schema
+const UserSchema = new mongoose.Schema({
+    email: { 
+        type: String, 
+        required: true, 
+        unique: true 
+    },
+    password: { 
+        type: String, 
+        required: true 
+    },
+    name: String,
+    interests: {
+        fitness: { type: Number, min: 0, max: 10 },
+        goingOut: { type: Number, min: 0, max: 10 },
+        timFerriss: { type: Number, min: 0, max: 10 },
+        chess: { type: Number, min: 0, max: 10 },
+        entrepreneurship: { type: Number, min: 0, max: 10 },
+        gaming: { type: Number, min: 0, max: 10 },
+        andrewHuberman: { type: Number, min: 0, max: 10 }
+    },
+    date: { 
+        type: Date, 
+        default: Date.now 
+    }
+});
+
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
+
+const User = mongoose.model('User', UserSchema);
+
+// Error Handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).json({ message: 'Something went wrong!' });
+});
+
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;

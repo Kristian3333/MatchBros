@@ -256,5 +256,32 @@
             }
         }
     </script>
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+        }
+    
+        // Add logout function
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            window.location.href = '/login';
+        }
+    
+        // Check auth on page load
+        checkAuth();
+    
+        // Add this to your fetch calls
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    </script>
 </body>
 </html>
