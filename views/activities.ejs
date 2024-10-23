@@ -1,103 +1,77 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Groups</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f5a623;
-            --background-color: #f4f4f4;
-            --text-color: #333;
-        }
-        
-        body { 
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
+        body {
+            font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
-        
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 1rem;
+        .hidden {
+            display: none;
         }
-        
-        h1, h2 { margin: 0; }
-        
-        .activity {
-            background: white;
+        .group-size-selector {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            overflow: hidden;
         }
-        
-        .activity h2 {
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 10px;
-            margin: 0;
-        }
-        
         .group {
+            margin: 20px 0;
             padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
-        
-        .group:last-child {
-            border-bottom: none;
-        }
-        
         .member {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
         }
-        
-        .member strong {
-            color: var(--primary-color);
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        
-        .navigation { 
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .nav-links {
             margin-top: 20px;
-            text-align: center;
-        }
-        
-        .navigation a {
-            color: var(--primary-color);
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        
-        .navigation a:hover {
-            text-decoration: underline;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1><i class="fas fa-users"></i> Activity Groups</h1>
-    </header>
-    
-    <div class="container">
+    <h1>Activity Groups</h1>
+
+    <button id="findActivitiesBtn" class="button">Find activities with like-minded people</button>
+
+    <div id="groupSizeSelector" class="group-size-selector hidden">
+        <h2>How many people would you like to meet?</h2>
+        <select id="groupSizeSelect" class="button">
+            <option value="2">2 people</option>
+            <option value="3">3 people</option>
+            <option value="4">4 people</option>
+            <option value="5">5 people</option>
+        </select>
+        <button onclick="findGroups()" class="button">Find Groups</button>
+    </div>
+
+    <div id="groupsContainer" class="hidden">
         <% if (activities && activities.length) { %>
             <% activities.forEach(function(activity) { %>
-                <div class="activity">
+                <div class="group">
                     <h2><%= activity.name %></h2>
                     <% if (activity.groups && activity.groups.length) { %>
                         <% activity.groups.forEach(function(group, index) { %>
@@ -105,8 +79,8 @@
                                 <h3>Group <%= index + 1 %></h3>
                                 <% group.forEach(function(member) { %>
                                     <div class="member">
-                                        <strong><%= member.name %></strong>
-                                        <span>Interest level: <%= member.interestLevel %>/10</span>
+                                        <p><strong><%= member.name %></strong></p>
+                                        <p>Interest level: <%= member.interestLevel %>/10</p>
                                     </div>
                                 <% }); %>
                             </div>
@@ -119,11 +93,42 @@
         <% } else { %>
             <p>No activities to display.</p>
         <% } %>
-        
-        <div class="navigation">
-            <a href="/"><i class="fas fa-home"></i> Home</a> | 
-            <a href="/users"><i class="fas fa-user-friends"></i> View All Users</a>
-        </div>
     </div>
+
+    <div class="nav-links">
+        <a href="/">Home</a> |
+        <a href="/users">View All Users</a>
+    </div>
+
+    <script>
+        document.getElementById('findActivitiesBtn').addEventListener('click', function() {
+            document.getElementById('groupSizeSelector').classList.remove('hidden');
+            this.classList.add('hidden');
+        });
+
+        async function findGroups() {
+            const groupSize = document.getElementById('groupSizeSelect').value;
+            try {
+                const response = await fetch(`/api/activities/groups/${groupSize}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch groups');
+                }
+
+                const data = await response.json();
+                document.getElementById('groupsContainer').classList.remove('hidden');
+                // The server will re-render the page with the new groups
+                window.location.reload();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch groups. Please try again.');
+            }
+        }
+    </script>
 </body>
 </html>

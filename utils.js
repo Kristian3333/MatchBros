@@ -1,3 +1,4 @@
+
 // utils.js
 
 function calculateSimilarity(user1, user2) {
@@ -59,4 +60,69 @@ function generateActivityGroups(users) {
     });
 }
 
-module.exports = { calculateSimilarity, findBestMatches, generateActivityGroups };
+function generateSimilarityGroups(users, groupSize) {
+    const activities = [
+        { name: 'Fitness', key: 'fitness' },
+        { name: 'Going Out', key: 'goingOut' },
+        { name: 'Tim Ferriss', key: 'timFerriss' },
+        { name: 'Chess', key: 'chess' },
+        { name: 'Entrepreneurship', key: 'entrepreneurship' },
+        { name: 'Gaming', key: 'gaming' },
+        { name: 'Andrew Huberman', key: 'andrewHuberman' }
+    ];
+
+    return activities.map(activity => {
+        const groups = [];
+        const usersWithInterest = users
+            .filter(user => user.interests && user.interests[activity.key] > 0)
+            .map(user => ({
+                name: user.name,
+                interestLevel: user.interests[activity.key],
+                interests: user.interests
+            }));
+
+        // Sort users by interest level in the specific activity
+        usersWithInterest.sort((a, b) => b.interestLevel - a.interestLevel);
+
+        // Create groups based on similarity
+        let remainingUsers = [...usersWithInterest];
+        while (remainingUsers.length >= groupSize) {
+            // Take the user with highest interest as the base for the new group
+            const baseUser = remainingUsers[0];
+            remainingUsers = remainingUsers.slice(1);
+
+            // Find the most similar users to the base user
+            const mostSimilarUsers = remainingUsers
+                .map(user => ({
+                    ...user,
+                    similarity: calculateSimilarity(
+                        { interests: baseUser.interests },
+                        { interests: user.interests }
+                    )
+                }))
+                .sort((a, b) => b.similarity - a.similarity)
+                .slice(0, groupSize - 1);
+
+            // Create the group
+            if (mostSimilarUsers.length === groupSize - 1) {
+                groups.push([baseUser, ...mostSimilarUsers]);
+                // Remove the selected users from remaining users
+                remainingUsers = remainingUsers.filter(user => 
+                    !mostSimilarUsers.some(selectedUser => selectedUser.name === user.name)
+                );
+            }
+        }
+
+        return {
+            name: activity.name,
+            groups: groups
+        };
+    }).filter(activity => activity.groups.length > 0);
+}
+
+module.exports = {
+    calculateSimilarity,
+    findBestMatches,
+    generateActivityGroups,
+    generateSimilarityGroups
+};

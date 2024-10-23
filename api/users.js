@@ -1,8 +1,9 @@
+ 
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const dbConnect = require('../lib/dbConnect');
-const { findBestMatches, generateActivityGroups } = require('../utils');
+const { findBestMatches, generateActivityGroups, generateSimilarityGroups } = require('../utils');
 
 // Get all users
 router.get('/users', async (req, res) => {
@@ -67,6 +68,20 @@ router.get('/activities', async (req, res) => {
     } catch (error) {
         console.error('Error generating activity groups:', error);
         res.status(500).json({ message: 'Error generating activity groups', error: error.message });
+    }
+});
+
+// Get similarity-based groups
+router.get('/activities/groups/:size', async (req, res) => {
+    try {
+        await dbConnect();
+        const groupSize = parseInt(req.params.size);
+        const users = await User.find();
+        const groups = generateSimilarityGroups(users, groupSize);
+        res.json(groups);
+    } catch (error) {
+        console.error('Error generating similarity groups:', error);
+        res.status(500).json({ message: 'Error generating similarity groups', error: error.message });
     }
 });
 
