@@ -4,7 +4,26 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('./middleware/auth');
+
+// Load environment variables
 require('dotenv').config();
+
+// Check for required environment variables
+if (!process.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not defined in environment variables');
+    process.exit(1);
+}
+
+if (!process.env.MONGODB_URI) {
+    console.error('MONGODB_URI is not defined in environment variables');
+    process.exit(1);
+}
+
+// Log environment variables (remove in production)
+console.log('Environment variables loaded:', {
+    JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set',
+    MONGODB_URI: process.env.MONGODB_URI ? 'Set' : 'Not set'
+});
 
 const app = express();
 
