@@ -14,6 +14,9 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -21,32 +24,30 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
+            width: 100%;
             max-width: 500px;
-            margin: 0 auto;
         }
         h1 {
             color: #4a3f8d;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             font-size: 2.5em;
-            font-weight: 700;
         }
         .form-group {
-            margin: 20px 0;
+            margin-bottom: 20px;
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #4a3f8d;
             font-weight: 600;
-            font-size: 1.1em;
         }
         input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #667eea;
             border-radius: 10px;
-            font-size: 1.1em;
+            font-size: 1em;
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
@@ -55,22 +56,30 @@
             border-color: #764ba2;
             box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.2);
         }
+        .error {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
         .button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 15px;
             border: none;
-            border-radius: 30px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1.1em;
             width: 100%;
-            margin-top: 30px;
-            transition: all 0.3s ease;
             font-weight: 600;
+            transition: all 0.3s ease;
         }
         .button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button:active {
+            transform: translateY(0);
         }
         .login-link {
             text-align: center;
@@ -85,22 +94,11 @@
             color: #764ba2;
             text-decoration: underline;
         }
-        .error {
-            color: #dc3545;
-            font-size: 0.9em;
-            margin-top: 5px;
+        .loading {
             display: none;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 2em;
-            }
-            input, .button {
-                font-size: 1em;
-            }
+            text-align: center;
+            margin-top: 10px;
+            color: #4a3f8d;
         }
     </style>
 </head>
@@ -109,48 +107,70 @@
         <h1>Register</h1>
         <form id="registerForm">
             <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" required>
+                <label for="name">Name</label>
+                <input type="text" id="name" required minlength="2">
                 <div class="error" id="nameError"></div>
             </div>
+            
             <div class="form-group">
-                <label for="email">Email:</label>
+                <label for="email">Email</label>
                 <input type="email" id="email" required>
                 <div class="error" id="emailError"></div>
             </div>
+            
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" required minlength="6">
                 <div class="error" id="passwordError"></div>
             </div>
+            
             <div class="form-group">
-                <label for="confirmPassword">Confirm Password:</label>
-                <input type="password" id="confirmPassword" required>
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required minlength="6">
                 <div class="error" id="confirmPasswordError"></div>
             </div>
+
             <button type="submit" class="button">Register</button>
+            <div class="loading" id="loadingIndicator">Registering...</div>
+            
             <div class="login-link">
-                <p>Already have an account? <a href="/login">Login</a></p>
+                Already have an account? <a href="/login">Login</a>
             </div>
         </form>
     </div>
 
     <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        const form = document.getElementById('registerForm');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        function showError(elementId, message) {
+            const errorDiv = document.getElementById(elementId);
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error').forEach(error => {
+                error.style.display = 'none';
+                error.textContent = '';
+            });
+        }
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Reset error messages
-            document.querySelectorAll('.error').forEach(err => err.style.display = 'none');
-            
+            clearErrors();
+
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
             if (password !== confirmPassword) {
-                const errorDiv = document.getElementById('confirmPasswordError');
-                errorDiv.textContent = "Passwords don't match!";
-                errorDiv.style.display = 'block';
+                showError('confirmPasswordError', "Passwords don't match!");
                 return;
             }
+
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            form.querySelector('button').disabled = true;
             
             try {
                 const response = await fetch('/api/auth/register', {
@@ -168,19 +188,27 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    console.log('Registration successful, token:', data.token);
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('userId', data.userId);
-                    console.log('Redirecting to dashboard...');
                     window.location.href = '/dashboard';
                 } else {
                     throw new Error(data.message || 'Registration failed');
                 }
             } catch (error) {
-                console.error('Registration error:', error);
-                const errorDiv = document.getElementById('emailError');
-                errorDiv.textContent = error.message;
-                errorDiv.style.display = 'block';
+                showError('emailError', error.message);
+            } finally {
+                loadingIndicator.style.display = 'none';
+                form.querySelector('button').disabled = false;
+            }
+        });
+
+        // Real-time password matching validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (password !== confirmPassword) {
+                showError('confirmPasswordError', "Passwords don't match!");
+            } else {
+                document.getElementById('confirmPasswordError').style.display = 'none';
             }
         });
     </script>
