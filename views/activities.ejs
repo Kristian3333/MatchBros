@@ -1,4 +1,4 @@
-```html
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,6 +50,16 @@
             padding-top: 20px;
             border-top: 1px solid #ddd;
         }
+        .activity-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .similarity-score {
+            color: #666;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -68,67 +78,6 @@
         <button onclick="findGroups()" class="button">Find Groups</button>
     </div>
 
-    <div id="groupsContainer" class="hidden">
-        <% if (activities && activities.length) { %>
-            <% activities.forEach(function(activity) { %>
-                <div class="group">
-                    <h2><%= activity.name %></h2>
-                    <% if (activity.groups && activity.groups.length) { %>
-                        <% activity.groups.forEach(function(group, index) { %>
-                            <div class="group">
-                                <h3>Group <%= index + 1 %></h3>
-                                <% group.forEach(function(member) { %>
-                                    <div class="member">
-                                        <p><strong><%= member.name %></strong></p>
-                                        <p>Interest level: <%= member.interestLevel %>/10</p>
-                                    </div>
-                                <% }); %>
-                            </div>
-                        <% }); %>
-                    <% } else { %>
-                        <p>No groups formed for this activity yet.</p>
-                    <% } %>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <p>No activities to display.</p>
-        <% } %>
-    </div>
+    <div id="groupsContainer"></div>
 
-    <div class="nav-links">
-        <a href="/">Home</a> |
-        <a href="/users">View All Users</a>
-    </div>
-
-    <script>
-        document.getElementById('findActivitiesBtn').addEventListener('click', function() {
-            document.getElementById('groupSizeSelector').classList.remove('hidden');
-            this.classList.add('hidden');
-        });
-
-        async function findGroups() {
-            const groupSize = document.getElementById('groupSizeSelect').value;
-            try {
-                const response = await fetch(`/api/activities/groups/${groupSize}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch groups');
-                }
-
-                const data = await response.json();
-                document.getElementById('groupsContainer').classList.remove('hidden');
-                // The server will re-render the page with the new groups
-                window.location.reload();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to fetch groups. Please try again.');
-            }
-        }
-    </script>
-</body>
-</html>
+    <div
