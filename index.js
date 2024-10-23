@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const app = express();
 
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
