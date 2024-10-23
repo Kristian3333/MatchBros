@@ -1,229 +1,258 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Buddy Finder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f5a623;
-            --background-color: #f4f4f4;
-            --text-color: #333;
-        }
-        
-        body { 
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .container {
-            max-width: 800px;
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            min-height: 100vh;
+            box-sizing: border-box;
         }
-        
-        header {
-            background-color: var(--primary-color);
-            color: white;
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1a237e;
             text-align: center;
-            padding: 1rem;
+            margin-bottom: 40px;
+            font-size: 3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        h1 { 
-            margin: 0;
+        .form-group {
+            margin: 25px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        
-        form { 
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-top: 20px;
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            color: #2c3e50;
+            font-weight: 500;
         }
-        
-        label { 
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
         }
-        
-        input[type="text"], input[type="range"] {
-            width: 60%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 60%;
-            height: 10px;
-            border-radius: 5px;  
-            background: #d3d3d3;
+        input[type="text"]:focus,
+        input[type="number"]:focus {
             outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
         }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%; 
-            background: var(--secondary-color);
-            cursor: pointer;
+        input[type="number"] {
+            max-width: 100px;
         }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--secondary-color);
-            cursor: pointer;
-        }
-        
-        button { 
-            background-color: var(--secondary-color);
+        .button {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             color: white;
+            padding: 15px 30px;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            font-size: 1.2em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto;
+            min-width: 250px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        button:hover {
-            background-color: #e69100;
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+            background: linear-gradient(135deg, #2980b9 0%, #2473a5 100%);
         }
-        
-        #result {
-            margin-top: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .navigation { 
-            margin-top: 20px;
+        .nav-links {
+            margin-top: 40px;
             text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
         }
-        
-        .navigation a {
-            color: var(--primary-color);
+        .nav-links a {
+            color: #3498db;
             text-decoration: none;
-            margin: 0 10px;
+            margin: 0 15px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
         }
-        
-        .navigation a:hover {
+        .nav-links a:hover {
+            color: #2980b9;
             text-decoration: underline;
         }
-        
-        @media (max-width: 600px) {
-            input[type="range"] { width: 50%; }
+        .interest-scale {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .interest-scale span {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .button {
+                font-size: 1em;
+                min-width: 200px;
+                padding: 12px 24px;
+            }
+            label {
+                font-size: 1.1em;
+            }
+            input[type="text"],
+            input[type="number"] {
+                font-size: 1em;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1><i class="fas fa-users"></i> Activity Buddy Finder</h1>
-    </header>
-    
     <div class="container">
-        <form id="interestForm">
-            <label for="name">Name: <input type="text" id="name" required></label>
-            <label>Fitness: <input type="range" id="fitness" min="0" max="10" value="5"></label>
-            <label>Going Out: <input type="range" id="goingOut" min="0" max="10" value="5"></label>
-            <label>Tim Ferriss: <input type="range" id="timFerriss" min="0" max="10" value="5"></label>
-            <label>Chess: <input type="range" id="chess" min="0" max="10" value="5"></label>
-            <label>Entrepreneurship: <input type="range" id="entrepreneurship" min="0" max="10" value="5"></label>
-            <label>Gaming: <input type="range" id="gaming" min="0" max="10" value="5"></label>
-            <label>Andrew Huberman: <input type="range" id="andrewHuberman" min="0" max="10" value="5"></label>
-            <button type="submit">Let's Gooo</button>
-        </form>
+        <h1>Activity Buddy Finder</h1>
         
-        <div id="result"></div>
+        <form action="/api/users" method="POST">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
 
-        <div class="navigation">
-            <a href="/users"><i class="fas fa-user-friends"></i> View All Users</a> | 
-            <a href="/activities"><i class="fas fa-running"></i> View Activity Groups</a>
+            <div class="form-group">
+                <label for="fitness">Fitness:</label>
+                <div class="interest-scale">
+                    <input type="number" id="fitness" name="interests[fitness]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="goingOut">Going Out:</label>
+                <div class="interest-scale">
+                    <input type="number" id="goingOut" name="interests[goingOut]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="timFerriss">Tim Ferriss:</label>
+                <div class="interest-scale">
+                    <input type="number" id="timFerriss" name="interests[timFerriss]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="chess">Chess:</label>
+                <div class="interest-scale">
+                    <input type="number" id="chess" name="interests[chess]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="entrepreneurship">Entrepreneurship:</label>
+                <div class="interest-scale">
+                    <input type="number" id="entrepreneurship" name="interests[entrepreneurship]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="gaming">Gaming:</label>
+                <div class="interest-scale">
+                    <input type="number" id="gaming" name="interests[gaming]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="andrewHuberman">Andrew Huberman:</label>
+                <div class="interest-scale">
+                    <input type="number" id="andrewHuberman" name="interests[andrewHuberman]" min="0" max="10" required>
+                    <span>(0-10)</span>
+                </div>
+            </div>
+
+            <button type="submit" class="button">Let's Gooo</button>
+        </form>
+
+        <div class="nav-links">
+            <a href="/users">View All Users</a> |
+            <a href="/activities">View Activity Groups</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('interestForm').addEventListener('submit', async (e) => {
+        document.querySelector('form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = {
-                name: document.getElementById('name').value,
-                interests: {
-                    fitness: parseInt(document.getElementById('fitness').value),
-                    goingOut: parseInt(document.getElementById('goingOut').value),
-                    timFerriss: parseInt(document.getElementById('timFerriss').value),
-                    chess: parseInt(document.getElementById('chess').value),
-                    entrepreneurship: parseInt(document.getElementById('entrepreneurship').value),
-                    gaming: parseInt(document.getElementById('gaming').value),
-                    andrewHuberman: parseInt(document.getElementById('andrewHuberman').value)
-                }
-            };
-
+            
             try {
-                console.log('Submitting form data:', formData);
+                const formData = new FormData(e.target);
+                const data = {
+                    name: formData.get('name'),
+                    interests: {
+                        fitness: parseInt(formData.get('interests[fitness]')),
+                        goingOut: parseInt(formData.get('interests[goingOut]')),
+                        timFerriss: parseInt(formData.get('interests[timFerriss]')),
+                        chess: parseInt(formData.get('interests[chess]')),
+                        entrepreneurship: parseInt(formData.get('interests[entrepreneurship]')),
+                        gaming: parseInt(formData.get('interests[gaming]')),
+                        andrewHuberman: parseInt(formData.get('interests[andrewHuberman]'))
+                    }
+                };
+
                 const response = await fetch('/api/users', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
-                
+
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error('Network response was not ok');
                 }
-                
-                const data = await response.json();
-                console.log('Server response:', data);
-                
-                document.getElementById('result').innerHTML = `
-                    <h2>Your Interests:</h2>
-                    <p><strong>Name:</strong> ${data.name}</p>
-                    <p><strong>Fitness:</strong> ${data.interests.fitness}/10</p>
-                    <p><strong>Going Out:</strong> ${data.interests.goingOut}/10</p>
-                    <p><strong>Tim Ferriss:</strong> ${data.interests.timFerriss}/10</p>
-                    <p><strong>Chess:</strong> ${data.interests.chess}/10</p>
-                    <p><strong>Entrepreneurship:</strong> ${data.interests.entrepreneurship}/10</p>
-                    <p><strong>Gaming:</strong> ${data.interests.gaming}/10</p>
-                    <p><strong>Andrew Huberman:</strong> ${data.interests.andrewHuberman}/10</p>
-                    <p>Your interests have been saved successfully!</p>
-                    <div class="navigation">
-                        <a href="/users"><i class="fas fa-user-friends"></i> View All Users</a> | 
-                        <a href="/activities"><i class="fas fa-running"></i> Find Activity Buddies</a>
-                    </div>
-                `;
+
+                window.location.href = '/activities';
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('result').innerHTML = `
-                    <p>Error: Failed to save your interests. Please try again.</p>
-                    <p>Error details: ${error.message}</p>
-                `;
+                alert('Failed to submit form. Please try again.');
             }
-        });
-
-        // Update range value display
-        const ranges = document.querySelectorAll('input[type="range"]');
-        ranges.forEach(range => {
-            const label = range.parentElement;
-            const valueDisplay = document.createElement('span');
-            valueDisplay.textContent = range.value;
-            label.appendChild(valueDisplay);
-
-            range.addEventListener('input', () => {
-                valueDisplay.textContent = range.value;
-            });
         });
     </script>
 </body>
