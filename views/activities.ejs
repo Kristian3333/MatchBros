@@ -1,83 +1,120 @@
- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity Groups</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .hidden {
-            display: none;
-        }
-        .group-size-selector {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            border-radius: 8px;
-        }
-        .group {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .member {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        .button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: #0056b3;
-        }
-        .nav-links {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        .activity-section {
-            margin: 30px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-        .similarity-score {
-            color: #666;
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-    <h1>Activity Groups</h1>
+<button id="findActivitiesBtn" class="button">Find activities with like-minded people</button>
 
-    <button id="findActivitiesBtn" class="button">Find activities with like-minded people</button>
+<div id="groupSizeSelector" class="group-size-selector hidden">
+    <h2>How many people would you like to meet?</h2>
+    <select id="groupSizeSelect" class="button">
+        <option value="2">2 people</option>
+        <option value="3">3 people</option>
+        <option value="4">4 people</option>
+        <option value="5">5 people</option>
+    </select>
+    <button onclick="findGroups()" class="button">Find Groups</button>
+</div>
 
-    <div id="groupSizeSelector" class="group-size-selector hidden">
-        <h2>How many people would you like to meet?</h2>
-        <select id="groupSizeSelect" class="button">
-            <option value="2">2 people</option>
-            <option value="3">3 people</option>
-            <option value="4">4 people</option>
-            <option value="5">5 people</option>
-        </select>
-        <button onclick="findGroups()" class="button">Find Groups</button>
-    </div>
+<div id="dynamicGroups"></div>
 
-    <div id="groupsContainer"></div>
+<div id="initialGroups">
+    <% if (activities && activities.length) { %>
+        <% activities.forEach(function(activity) { %>
+            <div class="group">
+                <h2><%= activity.name %></h2>
+                <% if (activity.groups && activity.groups.length) { %>
+                    <% activity.groups.forEach(function(group, index) { %>
+                        <div class="group">
+                            <h3>Group <%= index + 1 %></h3>
+                            <% group.forEach(function(member) { %>
+                                <div class="member">
+                                    <p><strong><%= member.name %></strong></p>
+                                    <p>Interest level: <%= member.interestLevel %>/10</p>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No groups formed for this activity yet.</p>
+                <% } %>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>No activities to display.</p>
+    <% } %>
+</div>
 
-    <div
+<div class="nav-links">
+    <a href="/">Home</a> |
+    <a href="/users">View All Users</a>
+</div>
+
+<script>
+    document.getElementById('findActivitiesBtn').addEventListener('click', function() {
+        document.getElementById('groupSizeSelector').classList.remove('hidden');
+        this.classList.add('hidden');
+        document.getElementById('initialGroups').classList.add('hidden');
+    });
+
+    async function findGroups() {
+        const groupSize = document.getElementById('groupSizeSelect').value;
+        const dynamicGroups = document.getElementById('dynamicGroups');
+        
+        try {
+            console.log('Fetching groups for size:', groupSize);
+            const response = await fetch(`/api/activities/groups/${groupSize}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const activities = await response.json();
+            console.log('Received activities:', activities);
+            
+            dynamicGroups.innerHTML = '';
+            
+            activities.forEach(activity => {
+                const activitySection = document.createElement('div');
+                activitySection.className = 'activity-section';
+                
+                let activityHtml = `<h2>${activity.name}</h2>`;
+                
+                if (activity.groups && activity.groups.length > 0) {
+                    activity.groups.forEach((group, groupIndex) => {
+                        activityHtml += `
+                            <div class="group">
+                                <h3>Group ${groupIndex + 1}</h3>
+                        `;
+                        
+                        group.forEach(member => {
+                            activityHtml += `
+                                <div class="member">
+                                    <p><strong>${member.name}</strong></p>
+                                    <p>Interest level: ${member.interestLevel}/10</p>
+                                    ${member.similarity ? 
+                                        `<p class="similarity-score">Similarity score: ${(member.similarity * 100).toFixed(1)}%</p>` 
+                                        : ''}
+                                </div>
+                            `;
+                        });
+                        
+                        activityHtml += `</div>`;
+                    });
+                } else {
+                    activityHtml += `<p>No groups formed for this activity yet.</p>`;
+                }
+                
+                activitySection.innerHTML = activityHtml;
+                dynamicGroups.appendChild(activitySection);
+            });
+            
+            dynamicGroups.classList.remove('hidden');
+            document.getElementById('groupSizeSelector').classList.add('hidden');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            dynamicGroups.innerHTML = `
+                <div class="error">
+                    <p>Failed to fetch groups. Please try again.</p>
+                    <p>Error: ${error.message}</p>
+                </div>
+            `;
+        }
+    }
+</script>
