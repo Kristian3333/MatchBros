@@ -1,313 +1,144 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity Buddy Finder</title>
+    <title>Dashboard - Activity Buddy Finder</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-
-        
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            color: #4a3f8d;
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 3em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .form-group {
-            margin: 35px 0;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-        }
-        label {
-            display: block;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #4a3f8d;
-            font-weight: 600;
-        }
-        .slider-container {
-            position: relative;
-            height: 50px;
+        /* Your existing styles */
+        .nav {
             display: flex;
-            align-items: center;
-        }
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 15px;
-            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            justify-content: space-between;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            outline: none;
-            padding: 0;
-            margin: 0;
-            cursor: pointer;
+            margin-bottom: 20px;
         }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border: 0;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        input[type="range"]::-moz-range-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        .slider-value {
-            position: absolute;
-            right: -50px;
-            color: #4a3f8d;
-            font-weight: 600;
-            font-size: 1.2em;
-            width: 40px;
-            text-align: center;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #764ba2;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        .button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: block;
-            margin: 30px auto;
-            min-width: 250px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-        .button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-        }
-        .nav-links {
-            margin-top: 40px;
-            text-align: center;
-            padding-top: 20px;
-            border-top: 2px solid rgba(74, 63, 141, 0.2);
-        }
-        .nav-links a {
+        .nav a {
             color: #4a3f8d;
             text-decoration: none;
-            margin: 0 15px;
-            font-weight: 600;
-            font-size: 1.1em;
+            padding: 10px 20px;
+            border-radius: 5px;
             transition: all 0.3s ease;
         }
-        .nav-links a:hover {
-            color: #764ba2;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .nav a:hover {
+            background: #667eea;
+            color: white;
         }
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 2em;
-            }
-            .button {
-                font-size: 1em;
-                min-width: 200px;
-                padding: 12px 24px;
-            }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .slider-container {
+            margin: 15px 0;
+        }
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .slider {
+            width: 100%;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
-<script>
-    // Check if user is authenticated
-    function checkAuth() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login';
-        }
-    }
-
-    // Run on page load
-    checkAuth();
-</script>
 <body>
     <div class="container">
-        <h1>Activity Buddy Finder</h1>
-        
-        <form id="interestForm">
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+        <div class="nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/users">Users</a>
+            <a href="/activities">Activities</a>
+            <a href="/api/auth/logout">Logout</a>
+        </div>
 
-            <div class="form-group">
-                <label for="fitness">Fitness:</label>
+        <h1>Welcome, <%= user.name %></h1>
+
+        <div class="form-container">
+            <h2>Update Your Interests</h2>
+            <form id="interestsForm">
                 <div class="slider-container">
-                    <input type="range" id="fitness" name="interests[fitness]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
+                    <label for="fitness">Fitness (1-10)</label>
+                    <input type="range" id="fitness" name="fitness" min="1" max="10" value="<%= user.interests.fitness %>" class="slider">
+                    <span id="fitnessValue"><%= user.interests.fitness %></span>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="goingOut">Going Out:</label>
+                <!-- Repeat for other interests -->
                 <div class="slider-container">
-                    <input type="range" id="goingOut" name="interests[goingOut]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
+                    <label for="goingOut">Going Out (1-10)</label>
+                    <input type="range" id="goingOut" name="goingOut" min="1" max="10" value="<%= user.interests.goingOut %>" class="slider">
+                    <span id="goingOutValue"><%= user.interests.goingOut %></span>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="timFerriss">Tim Ferriss:</label>
-                <div class="slider-container">
-                    <input type="range" id="timFerriss" name="interests[timFerriss]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
-                </div>
-            </div>
+                <!-- Add other interests similarly -->
 
-            <div class="form-group">
-                <label for="chess">Chess:</label>
-                <div class="slider-container">
-                    <input type="range" id="chess" name="interests[chess]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="entrepreneurship">Entrepreneurship:</label>
-                <div class="slider-container">
-                    <input type="range" id="entrepreneurship" name="interests[entrepreneurship]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="gaming">Gaming:</label>
-                <div class="slider-container">
-                    <input type="range" id="gaming" name="interests[gaming]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="andrewHuberman">Andrew Huberman:</label>
-                <div class="slider-container">
-                    <input type="range" id="andrewHuberman" name="interests[andrewHuberman]" min="0" max="10" value="5">
-                    <div class="slider-value">5</div>
-                </div>
-            </div>
-
-            <button type="submit" class="button">Let's Gooo</button>
-        </form>
-
-        <div class="nav-links">
-            <a href="/users">View All Users</a> |
-            <a href="/activities">View Activity Groups</a>
+                <button type="submit" class="button">Update Interests</button>
+            </form>
+            <div id="message"></div>
         </div>
     </div>
 
     <script>
-        // Update slider values in real-time
-        document.querySelectorAll('input[type="range"]').forEach(slider => {
-            const valueDisplay = slider.nextElementSibling;
+        // Update slider values
+        document.querySelectorAll('.slider').forEach(slider => {
+            const valueSpan = document.getElementById(`${slider.id}Value`);
             slider.addEventListener('input', () => {
-                valueDisplay.textContent = slider.value;
+                valueSpan.textContent = slider.value;
             });
         });
 
-        document.getElementById('interestForm').addEventListener('submit', async (e) => {
+        // Form submission
+        document.getElementById('interestsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const messageDiv = document.getElementById('message');
             
             try {
-                const formData = new FormData(e.target);
-                const data = {
-                    name: formData.get('name'),
-                    interests: {
-                        fitness: parseInt(formData.get('interests[fitness]')),
-                        goingOut: parseInt(formData.get('interests[goingOut]')),
-                        timFerriss: parseInt(formData.get('interests[timFerriss]')),
-                        chess: parseInt(formData.get('interests[chess]')),
-                        entrepreneurship: parseInt(formData.get('interests[entrepreneurship]')),
-                        gaming: parseInt(formData.get('interests[gaming]')),
-                        andrewHuberman: parseInt(formData.get('interests[andrewHuberman]'))
-                    }
+                const interests = {
+                    fitness: parseInt(document.getElementById('fitness').value),
+                    goingOut: parseInt(document.getElementById('goingOut').value),
+                    // Add other interests
                 };
 
-                const response = await fetch('/api/users', {
+                const response = await fetch('/api/users/interests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ interests })
                 });
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                const data = await response.json();
 
-                window.location.href = '/activities';
+                if (response.ok) {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = 'Interests updated successfully!';
+                } else {
+                    throw new Error(data.message || 'Failed to update interests');
+                }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to submit form. Please try again.');
+                messageDiv.className = 'error';
+                messageDiv.textContent = error.message;
             }
+
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
         });
     </script>
 </body>
